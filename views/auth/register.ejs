@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script  src="https://kit.fontawesome.com/97446b8f60.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/auth.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/js/register.js" defer></script>
+</head>
+<body>
+
+  <div class="bg-img">
+
+    <div class="content">
+
+      <header>Zarejestruj się</header>
+      <p id="error"></p>
+
+      <form id="register">
+
+        <div class="field">
+          <i class="fas fa-user"></i>
+          <input type="text" required placeholder="Login" name="login" id="login">
+        </div><br>
+
+        <div class="field">
+          <i class="fas fa-envelope"></i>
+          <input type="email" required placeholder="Email" name="email" id="email">
+        </div>
+
+        <div class="field space">
+          <i class="fas fa-lock"></i>
+          <input type="password" class="password" required placeholder="Hasło" name="password" id="password">
+          <i class="fa fa-eye show"></i>
+        </div>
+
+        <div class="field space">
+          <i class="fas fa-lock"></i>
+          <input type="password" class="password" required placeholder="Potwierdź Hasło" name="passwordConfirm" id="passwordConfirm">
+          <i class="fa fa-eye show"></i>
+        </div><br><br>
+
+        <div class="field">
+          <span></span>
+          <button type="submit">ZAREJESTRUJ</button> 
+        </div><br>
+
+        <div class="signup">Masz już konto?
+          <a href="/auth/login">Zaloguj się</a>
+        </div>
+        
+      </form>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const passField = document.querySelector('.password');
+    const showBtn = document.querySelector('.show');
+
+    showBtn.addEventListener('click', function() {
+      if (passField.type === "password") {
+        passField.type = 'text';
+        showBtn.style.color = '#3498db';
+        showBtn.classList.remove('fa-eye');
+        showBtn.classList.add('fa-eye-slash');
+      } else {
+        passField.type = 'password';
+        showBtn.style.color = '#222';
+        showBtn.classList.remove('fa-eye-slash');
+        showBtn.classList.add('fa-eye');
+      }
+    });
+
+  </script>
+
+</body>
+</html>

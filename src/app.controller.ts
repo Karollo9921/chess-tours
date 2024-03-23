@@ -1,12 +1,10 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Res } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getLogin(@Res() res): object {
+    res.status(200);
+    return res.redirect('/auth/login');
   }
 }
