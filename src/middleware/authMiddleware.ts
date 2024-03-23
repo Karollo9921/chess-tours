@@ -28,7 +28,7 @@ export class AuthenticationMiddleware implements NestMiddleware {
 
       this.requestService.setUser({
         login: payload.login,
-        email: payload.email,
+        id: payload.id,
       });
     } else {
       res.redirect('/auth/login');

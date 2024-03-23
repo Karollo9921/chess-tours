@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './entity/user.entity';
+import { User, UserDocument } from './entity/user.entity';
 import { RegisterDto } from '../auth/dtos/register.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -28,12 +28,7 @@ export class UserService {
     });
   }
 
-  findOne(loginEmail: string): Promise<User> {
-    return this.userModel.findOne({
-      $or: [
-        { login: loginEmail.toLowerCase() },
-        { email: loginEmail.toLowerCase() },
-      ],
-    });
+  findOne(loginEmail: string): Promise<UserDocument> {
+    return this.userModel.findOne({ login: loginEmail.toLowerCase() });
   }
 }

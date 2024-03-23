@@ -28,13 +28,13 @@ export class AuthService {
 
   async login(loginCredentials: LoginDto): Promise<{ access_token: string }> {
     const { password } = loginCredentials;
-    const user: User = await this.userService.findOne(
-      loginCredentials.loginEmail,
-    );
+    const user = await this.userService.findOne(loginCredentials.login);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { login: user.login, email: user.email };
-      const access_token: string = this.jwtService.sign(payload);
+      const payload: JwtPayload = { login: user.login, id: `${user._id}` };
+      const access_token: string = this.jwtService.sign(payload, {
+        expiresIn: 3600 * 24 * 30 * 365,
+      });
 
       await this.authHistoryModel.create({ login: user.login });
 
