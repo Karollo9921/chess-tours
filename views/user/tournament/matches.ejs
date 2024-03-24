@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Matches</title>
+    <script>
+        // Funkcja do obsługi wysyłania formularza
+        async function handleSubmit(event) {
+    event.preventDefault(); // Zapobiegaj domyślnej akcji formularza
+    const form = event.target;
+    const url = form.action;
+    const formData = new FormData(form);
+    const jsonData = Object.fromEntries(formData.entries());
+    const tournamentId = form.dataset.tournamentId; // Upewnij się, że to działa jak oczekujesz
+
+    console.log("Wysyłanie żądania PUT do", url); // Diagnostyka URL
+    console.log("Dane:", jsonData); // Diagnostyka danych
+    console.log("tournamentId:", tournamentId); // Sprawdzenie tournamentId
+
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData),
+        });
+
+        console.log("Status odpowiedzi:", response.status); // Sprawdź status odpowiedzi
+
+        if (response.ok) {
+            console.log("Update successful");
+            // Upewnij się, że przekierowanie jest poprawne
+            window.location.href = `/tournament/${tournamentId}`;
+        } else {
+            console.error("Update failed", response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+        // Dodaj obsługę zdarzeń do wszystkich formularzy po załadowaniu strony
+        window.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', handleSubmit);
+            });
+        });
+    </script>
+</head>
+<body>
+    <button onclick="window.location='/tournament/<%= tournamentId %>';">Powrót do widoku tabeli</button>
+    <h1>Chess Matches</h1>
+    <% matches.forEach(function(match) { %>
+        <div>
+            <p>Runda <%= match.round %></p>
+            <% if (match.whitePlayerScore !== undefined && match.blackPlayerScore !== undefined) { %>
+                <p><%= match.whitePlayer %>: <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> :<%= match.blackPlayer %><% if (match.linkToMatch) { %> ||| <a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a><% } %></p>
+            <% } else { %>
+              <form id="form-<%= match._id %>" action="/matches/<%= match._id %>" method="post" data-tournament-id="<%= tournamentId %>">
+                    <input type="hidden" name="_method" value="put" />
+                    <label for="whitePlayerScore-<%= match._id %>"><%= match.whitePlayer %>:</label>
+                    <select id="whitePlayerScore-<%= match._id %>" name="whitePlayerScore" required>
+                        <option value="" selected disabled>Select score</option>
+                        <option value="1">1</option>
+                        <option value="0.5">0.5</option>
+                        <option value="0">0</option>
+                    </select>
+                    
+                    <label for="blackPlayerScore-<%= match._id %>"><%= match.blackPlayer %>:</label>
+                    <select id="blackPlayerScore-<%= match._id %>" name="blackPlayerScore" required>
+                        <option value="" selected disabled>Select score</option>
+                        <option value="1">1</option>
+                        <option value="0.5">0.5</option>
+                        <option value="0">0</option>
+                    </select>
+
+                    <% if (!match.linkToMatch) { %>
+                        <label for="linkToMatch-<%= match._id %>">Link to Match (optional):</label>
+                        <input type="text" id="linkToMatch-<%= match._id %>" name="linkToMatch">
+                    <% } %>
+                    
+                    <button type="submit">Update Match</button>
+                </form>
+            <% } %>
+        </div>
+    <% }); %>
+</body>
+</html>
+

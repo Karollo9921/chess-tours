@@ -23,7 +23,7 @@ async function login(loginEmail, password) {
     if (!data.success) {
       throw new Error(data.message);
     } else {
-      window.location.href = '/chat-gpt';
+      window.location.href = '/';
     }
   } catch (error) {
     console.log(error);

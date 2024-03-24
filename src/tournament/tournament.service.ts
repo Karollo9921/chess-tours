@@ -6,28 +6,121 @@ import { Tournament } from './entity/tournament.entity';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { Match } from 'src/match/entity/match.entity';
 import { MatchStatusEnum } from 'src/match/entity/match-status.enum';
+import { set, clone } from 'lodash';
+import { MatchService } from 'src/match/match.service';
+
+interface IUserTable {
+  userId: string;
+  username: string;
+  numOfMatches: number;
+  points: number;
+  wins: number;
+  draws: number;
+  losses: number;
+}
 
 @Injectable()
 export class TournamentService {
   constructor(
     @InjectModel(Tournament.name)
     private tournamentModel: Model<Tournament>,
+    private readonly matchService: MatchService,
     private readonly requestService: RequestService,
   ) {}
 
-  async createTournament(body: CreateTournamentDto): Promise<any> {
+  async list() {
+    return this.tournamentModel.find().sort({ name: 1 });
+  }
+
+  async getTable(tournamentId: string) {
+    const matches = await this.matchService.getMatchesByTournamentId(
+      tournamentId,
+    );
+
+    const table = matches
+      .reduce((acc: IUserTable[], cv) => {
+        const user1 = acc.find((item) => item.username === cv.whitePlayer);
+        const user2 = acc.find((item) => item.username === cv.blackPlayer);
+
+        if (!user1) {
+          acc.push({
+            userId: `${cv.whitePlayerId}`,
+            username: cv.whitePlayer,
+            numOfMatches:
+              cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
+            points: cv.whitePlayerScore || 0,
+            wins: cv.whitePlayerScore === 1 ? 1 : 0,
+            draws: cv.whitePlayerScore === 0.5 ? 1 : 0,
+            losses: cv.whitePlayerScore === 0 ? 1 : 0,
+          });
+        } else {
+          acc.forEach((ut) => {
+            if (ut.username === user1.username) {
+              ut.numOfMatches =
+                cv.whitePlayerScore + cv.blackPlayerScore === 1
+                  ? ut.numOfMatches + 1
+                  : ut.numOfMatches;
+              ut.points = ut.points + (cv.whitePlayerScore || 0);
+              ut.wins = cv.whitePlayerScore === 1 ? ut.wins + 1 : ut.wins;
+              ut.draws = cv.whitePlayerScore === 0.5 ? ut.draws + 1 : ut.draws;
+              ut.losses = cv.whitePlayerScore === 0 ? ut.losses + 1 : ut.losses;
+            }
+          });
+        }
+
+        if (!user2) {
+          acc.push({
+            userId: `${cv.blackPlayerId}`,
+            username: cv.blackPlayer,
+            numOfMatches:
+              cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
+            points: cv.blackPlayerScore || 0,
+            wins: cv.blackPlayerScore === 1 ? 1 : 0,
+            draws: cv.blackPlayerScore === 0.5 ? 1 : 0,
+            losses: cv.blackPlayerScore === 0 ? 1 : 0,
+          });
+        } else {
+          acc.forEach((ut) => {
+            if (ut.username === user2.username) {
+              ut.numOfMatches =
+                cv.whitePlayerScore + cv.blackPlayerScore === 1
+                  ? ut.numOfMatches + 1
+                  : ut.numOfMatches;
+              ut.points = ut.points + (cv.blackPlayerScore || 0);
+              ut.wins = cv.blackPlayerScore === 1 ? ut.wins + 1 : ut.wins;
+              ut.draws = cv.blackPlayerScore === 0.5 ? ut.draws + 1 : ut.draws;
+              ut.losses = cv.blackPlayerScore === 0 ? ut.losses + 1 : ut.losses;
+            }
+          });
+        }
+
+        return acc;
+      }, [])
+      .sort((a: IUserTable, b: IUserTable) => this.sortMethod(a, b));
+
+    return {
+      table,
+      matches: matches.sort((a, b) => {
+        if (a.round === b.round) {
+          return a.match - b.match;
+        }
+        return a.round - b.round;
+      }),
+    };
+  }
+
+  async createTournament(body: CreateTournamentDto): Promise<void> {
     // const { id } = this.requestService.getUser();
     const id = '65ff2e29ea140c5d4a5788d7';
     const tournament = await this.tournamentModel.create({
       participantsIds: body.playerIds.map((id) => new Types.ObjectId(id)),
+      name: body.name,
       creatorId: new Types.ObjectId(id),
     });
 
-    const matches = this.getMatches(tournament._id, body.playerIds);
-
-    if (matches.length) {
-      return matches;
-    }
+    await this.matchService.insertMatches(
+      this.getMatches(tournament._id, body.playerIds),
+    );
   }
 
   private getMatches(
@@ -46,19 +139,21 @@ export class TournamentService {
             matches.push({
               tournamentId,
               round,
-              whitePlayer: new Types.ObjectId(helpListOfPlayers[i - j]),
-              blackPlayer: new Types.ObjectId(
+              whitePlayerId: new Types.ObjectId(helpListOfPlayers[i - j]),
+              blackPlayerId: new Types.ObjectId(
                 helpListOfPlayers[(i + j + 1) % (numOfPlayers - 1)],
               ),
               status: MatchStatusEnum.waiting,
+              match: 1,
             });
           } else {
             matches.push({
               tournamentId,
               round,
-              whitePlayer: new Types.ObjectId(helpListOfPlayers[i - j]),
-              blackPlayer: new Types.ObjectId(playerIds[numOfPlayers - 1]),
+              whitePlayerId: new Types.ObjectId(helpListOfPlayers[i - j]),
+              blackPlayerId: new Types.ObjectId(playerIds[numOfPlayers - 1]),
               status: MatchStatusEnum.waiting,
+              match: 1,
             });
           }
         }
@@ -71,30 +166,67 @@ export class TournamentService {
             matches.push({
               tournamentId,
               round,
-              whitePlayer: new Types.ObjectId(
+              whitePlayerId: new Types.ObjectId(
                 playerIds[(i - j - 1 + numOfPlayers) % numOfPlayers],
               ),
-              blackPlayer: new Types.ObjectId(
+              blackPlayerId: new Types.ObjectId(
                 playerIds[(i - j + 1) % numOfPlayers],
               ),
               status: MatchStatusEnum.waiting,
+              match: 1,
             });
           } else {
             matches.push({
               tournamentId,
               round,
-              whitePlayer: new Types.ObjectId(
+              whitePlayerId: new Types.ObjectId(
                 playerIds[(i - j - 1 + numOfPlayers) % numOfPlayers],
               ),
-              blackPlayer: new Types.ObjectId(
+              blackPlayerId: new Types.ObjectId(
                 playerIds[(i - j + 1) % numOfPlayers],
               ),
               status: MatchStatusEnum.waiting,
+              match: 1,
             });
           }
         }
       }
     }
-    return matches;
+    // return matches;
+    return this.addRevenges(matches);
+  }
+
+  private addRevenges(matches: Match[]): Match[] {
+    const revanges = [];
+    for (const match of matches) {
+      const revenge = clone(match);
+
+      set(revenge, 'whitePlayerId', match.blackPlayerId);
+      set(revenge, 'blackPlayerId', match.whitePlayerId);
+      set(revenge, 'match', revenge.match + 1);
+
+      revanges.push(revenge);
+    }
+
+    return [...matches, ...revanges];
+  }
+
+  private sortMethod(a: IUserTable, b: IUserTable) {
+    if (a.points !== b.points) {
+      return b.points - a.points;
+    }
+
+    if (a.numOfMatches !== b.numOfMatches) {
+      return a.numOfMatches - b.numOfMatches;
+    }
+
+    if (a.wins !== b.wins) {
+      return b.wins - a.wins;
+    }
+
+    if (a.draws !== b.draws) {
+      return b.draws - a.draws;
+    }
+    return b.username.localeCompare(a.username);
   }
 }

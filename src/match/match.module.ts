@@ -31,5 +31,6 @@ import { UserModule } from 'src/user/user.module';
       useClass: ThrottlerGuard,
     },
   ],
+  exports: [MatchService],
 })
 export class MatchModule {}

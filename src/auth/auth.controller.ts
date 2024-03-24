@@ -33,6 +33,7 @@ export class AuthController {
   ): Promise<{ success: boolean; message: string }> {
     try {
       const { access_token } = await this.authService.login(loginCredentials);
+      console.log(access_token);
       res.cookie('jwt', access_token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -44,7 +45,7 @@ export class AuthController {
     } catch (err) {
       return res.json({
         success: false,
-        message: err.response.message,
+        message: err,
       });
     }
   }

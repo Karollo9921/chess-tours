@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { IsMongoId, IsEnum } from 'class-validator';
+import { IsMongoId, IsEnum, IsString } from 'class-validator';
 import { TournamentStatusEnum } from './tournament-status.enum';
 
 export type TournamentDocument = Tournament & Document;
@@ -10,6 +10,10 @@ export class Tournament {
   @Prop({ type: [{ type: Types.ObjectId }], required: true })
   @IsMongoId({ each: true })
   participantsIds: Types.ObjectId[];
+
+  @Prop({ type: String, required: true })
+  @IsString()
+  name: string;
 
   @Prop({ type: Types.ObjectId, required: true })
   @IsMongoId()

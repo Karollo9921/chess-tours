@@ -1,10 +1,13 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Render } from '@nestjs/common';
+import { TournamentService } from './tournament/tournament.service';
 
 @Controller()
 export class AppController {
+  constructor(private readonly tournamentService: TournamentService) {}
+
   @Get()
-  getLogin(@Res() res): object {
-    res.status(200);
-    return res.redirect('/auth/login');
+  @Render('index')
+  async showMainPage() {
+    return { tournaments: await this.tournamentService.list() };
   }
 }

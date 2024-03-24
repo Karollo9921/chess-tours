@@ -29,6 +29,7 @@ export class UserService {
   }
 
   findOne(loginEmail: string): Promise<UserDocument> {
+    console.log(loginEmail);
     return this.userModel.findOne({ login: loginEmail.toLowerCase() });
   }
 }

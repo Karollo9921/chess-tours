@@ -1,5 +1,12 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Res,
+  Param,
+  Render,
+} from '@nestjs/common';
 import { TournamentService } from './tournament.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 
@@ -7,7 +14,6 @@ import { CreateTournamentDto } from './dto/create-tournament.dto';
 export class TournamentController {
   constructor(private readonly tournamentService: TournamentService) {}
 
-  // @Throttle(1, 15)
   @Post()
   async createTournament(@Body() body: CreateTournamentDto, @Res() res) {
     const data = await this.tournamentService.createTournament(body);
@@ -18,9 +24,21 @@ export class TournamentController {
     });
   }
 
-  // @Get(':tournamentId')
-  // @Render('index')
-  // showTournament(): { success: boolean } {
-  //   return { success: true };
-  // }
+  @Render('./tournament/tournament')
+  @Get(':tournamentId')
+  async getTable(@Param() { tournamentId }) {
+    const { table, matches } = await this.tournamentService.getTable(
+      tournamentId,
+    );
+    return {
+      table,
+      matches,
+      tournamentId,
+    };
+  }
+
+  @Get('list')
+  async getTournaments() {
+    return await this.tournamentService.list();
+  }
 }

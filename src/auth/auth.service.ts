@@ -28,7 +28,7 @@ export class AuthService {
 
   async login(loginCredentials: LoginDto): Promise<{ access_token: string }> {
     const { password } = loginCredentials;
-    const user = await this.userService.findOne(loginCredentials.login);
+    const user = await this.userService.findOne(loginCredentials.loginEmail);
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { login: user.login, id: `${user._id}` };
