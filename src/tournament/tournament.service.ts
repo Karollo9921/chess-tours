@@ -131,7 +131,7 @@ export class TournamentService {
     const numOfPlayers = playerIds.length;
     const helpListOfPlayers = playerIds.slice(0, numOfPlayers - 1);
 
-    if (numOfPlayers % 2 === 0) {
+    if (this.mod(numOfPlayers, 2) === 0) {
       for (let i = 0; i < numOfPlayers - 1; i++) {
         const round = i + 1;
         for (let j = 0; j < Math.floor(numOfPlayers / 2); j++) {
@@ -141,7 +141,7 @@ export class TournamentService {
               round,
               whitePlayerId: new Types.ObjectId(helpListOfPlayers[i - j]),
               blackPlayerId: new Types.ObjectId(
-                helpListOfPlayers[(i + j + 1) % (numOfPlayers - 1)],
+                helpListOfPlayers[this.mod(i + j + 1, numOfPlayers - 1)],
               ),
               status: MatchStatusEnum.waiting,
               match: 1,
@@ -162,33 +162,18 @@ export class TournamentService {
       for (let i = 0; i < numOfPlayers; i++) {
         const round = i + 1;
         for (let j = 0; j < Math.floor(numOfPlayers / 2); j++) {
-          if (j < Math.floor(numOfPlayers / 2)) {
-            matches.push({
-              tournamentId,
-              round,
-              whitePlayerId: new Types.ObjectId(
-                playerIds[(i - j - 1 + numOfPlayers) % numOfPlayers],
-              ),
-              blackPlayerId: new Types.ObjectId(
-                playerIds[(i - j + 1) % numOfPlayers],
-              ),
-              status: MatchStatusEnum.waiting,
-              match: 1,
-            });
-          } else {
-            matches.push({
-              tournamentId,
-              round,
-              whitePlayerId: new Types.ObjectId(
-                playerIds[(i - j - 1 + numOfPlayers) % numOfPlayers],
-              ),
-              blackPlayerId: new Types.ObjectId(
-                playerIds[(i - j + 1) % numOfPlayers],
-              ),
-              status: MatchStatusEnum.waiting,
-              match: 1,
-            });
-          }
+          matches.push({
+            tournamentId,
+            round,
+            whitePlayerId: new Types.ObjectId(
+              playerIds[this.mod(i - j - 1, numOfPlayers)],
+            ),
+            blackPlayerId: new Types.ObjectId(
+              playerIds[this.mod(i + j + 1, numOfPlayers)],
+            ),
+            status: MatchStatusEnum.waiting,
+            match: 1,
+          });
         }
       }
     }
@@ -228,5 +213,9 @@ export class TournamentService {
       return b.draws - a.draws;
     }
     return b.username.localeCompare(a.username);
+  }
+
+  private mod(n: number, m: number): number {
+    return ((n % m) + m) % m;
   }
 }
