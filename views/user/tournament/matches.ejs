@@ -52,39 +52,50 @@
 <body>
     <button onclick="window.location='/tournament/<%= tournamentId %>';">Powrót do widoku tabeli</button>
     <h1>Chess Matches</h1>
-    <% matches.forEach(function(match) { %>
-        <div>
-            <p>Runda <%= match.round %></p>
-            <% if (match.whitePlayerScore !== undefined && match.blackPlayerScore !== undefined) { %>
-                <p><%= match.whitePlayer %>: <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> :<%= match.blackPlayer %><% if (match.linkToMatch) { %> ||| <a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a><% } %></p>
-            <% } else { %>
-              <form id="form-<%= match._id %>" action="/matches/<%= match._id %>" method="post" data-tournament-id="<%= tournamentId %>">
-                    <input type="hidden" name="_method" value="put" />
-                    <label for="whitePlayerScore-<%= match._id %>"><%= match.whitePlayer %>:</label>
-                    <select id="whitePlayerScore-<%= match._id %>" name="whitePlayerScore" required>
-                        <option value="" selected disabled>Select score</option>
-                        <option value="1">1</option>
-                        <option value="0.5">0.5</option>
-                        <option value="0">0</option>
-                    </select>
-                    
-                    <label for="blackPlayerScore-<%= match._id %>"><%= match.blackPlayer %>:</label>
-                    <select id="blackPlayerScore-<%= match._id %>" name="blackPlayerScore" required>
-                        <option value="" selected disabled>Select score</option>
-                        <option value="1">1</option>
-                        <option value="0.5">0.5</option>
-                        <option value="0">0</option>
-                    </select>
-
-                    <% if (!match.linkToMatch) { %>
-                        <label for="linkToMatch-<%= match._id %>">Link to Match (optional):</label>
-                        <input type="text" id="linkToMatch-<%= match._id %>" name="linkToMatch">
-                    <% } %>
-                    
-                    <button type="submit">Update Match</button>
-                </form>
-            <% } %>
-        </div>
+    <% 
+    const groupedMatches = {};
+    matches.forEach(match => {
+        if (!groupedMatches[match.round]) {
+            groupedMatches[match.round] = [];
+        }
+        groupedMatches[match.round].push(match);
+    });
+    Object.keys(groupedMatches).sort((a, b) => a - b).forEach(round => {
+    %>
+        <h2 style="font-weight: bold;">Runda <%= round %></h2>
+        <% groupedMatches[round].forEach(match => { %>
+            <div>
+                <% if (match.whitePlayerScore !== undefined && match.blackPlayerScore !== undefined) { %>
+                    <p><%= match.whitePlayer %>: <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> :<%= match.blackPlayer %><% if (match.linkToMatch) { %> ||| <a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a><% } %></p>
+                <% } else { %>
+                    <form id="form-<%= match._id %>" action="/matches/<%= match._id %>" method="post" data-tournament-id="<%= tournamentId %>">
+                        <input type="hidden" name="_method" value="put" />
+                        <label for="whitePlayerScore-<%= match._id %>"><%= match.whitePlayer %>:</label>
+                        <select id="whitePlayerScore-<%= match._id %>" name="whitePlayerScore" required>
+                            <option value="" selected disabled>Select score</option>
+                            <option value="1">1</option>
+                            <option value="0.5">0.5</option>
+                            <option value="0">0</option>
+                        </select>
+                        
+                        <label for="blackPlayerScore-<%= match._id %>"><%= match.blackPlayer %>:</label>
+                        <select id="blackPlayerScore-<%= match._id %>" name="blackPlayerScore" required>
+                            <option value="" selected disabled>Select score</option>
+                            <option value="1">1</option>
+                            <option value="0.5">0.5</option>
+                            <option value="0">0</option>
+                        </select>
+    
+                        <% if (!match.linkToMatch) { %>
+                            <label for="linkToMatch-<%= match._id %>">Link to Match (optional):</label>
+                            <input type="text" id="linkToMatch-<%= match._id %>" name="linkToMatch">
+                        <% } %>
+                        
+                        <button type="submit">Update Match</button>
+                    </form>
+                <% } %>
+            </div>
+        <% }); %>
     <% }); %>
 </body>
 </html>
