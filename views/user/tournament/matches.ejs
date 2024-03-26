@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Matches</title>
+    <link rel="stylesheet" href="/css/matches.css">
     <script>
         // Funkcja do obsługi wysyłania formularza
         async function handleSubmit(event) {
@@ -14,10 +15,6 @@
     const jsonData = Object.fromEntries(formData.entries());
     const tournamentId = form.dataset.tournamentId; // Upewnij się, że to działa jak oczekujesz
 
-    console.log("Wysyłanie żądania PUT do", url); // Diagnostyka URL
-    console.log("Dane:", jsonData); // Diagnostyka danych
-    console.log("tournamentId:", tournamentId); // Sprawdzenie tournamentId
-
     try {
         const response = await fetch(url, {
             method: 'PUT',
@@ -27,10 +24,7 @@
             body: JSON.stringify(jsonData),
         });
 
-        console.log("Status odpowiedzi:", response.status); // Sprawdź status odpowiedzi
-
         if (response.ok) {
-            console.log("Update successful");
             // Upewnij się, że przekierowanie jest poprawne
             window.location.href = `/tournament/${tournamentId}`;
         } else {
@@ -66,11 +60,11 @@
         <% groupedMatches[round].forEach(match => { %>
             <div>
                 <% if (match.whitePlayerScore !== undefined && match.blackPlayerScore !== undefined) { %>
-                    <p><%= match.whitePlayer %>: <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> :<%= match.blackPlayer %><% if (match.linkToMatch) { %> ||| <a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a><% } %></p>
+                    <p><%= match.whitePlayer %> <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> <%= match.blackPlayer %><% if (match.linkToMatch) { %> *** (<a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a>) *** <% } %></p>
                 <% } else { %>
                     <form id="form-<%= match._id %>" action="/matches/<%= match._id %>" method="post" data-tournament-id="<%= tournamentId %>">
                         <input type="hidden" name="_method" value="put" />
-                        <label for="whitePlayerScore-<%= match._id %>"><%= match.whitePlayer %>:</label>
+                        <label for="whitePlayerScore-<%= match._id %>"><%= match.whitePlayer %> (BIAŁE):</label>
                         <select id="whitePlayerScore-<%= match._id %>" name="whitePlayerScore" required>
                             <option value="" selected disabled>Select score</option>
                             <option value="1">1</option>
@@ -78,7 +72,7 @@
                             <option value="0">0</option>
                         </select>
                         
-                        <label for="blackPlayerScore-<%= match._id %>"><%= match.blackPlayer %>:</label>
+                        <label for="blackPlayerScore-<%= match._id %>"><%= match.blackPlayer %> (CZARNE):</label>
                         <select id="blackPlayerScore-<%= match._id %>" name="blackPlayerScore" required>
                             <option value="" selected disabled>Select score</option>
                             <option value="1">1</option>
