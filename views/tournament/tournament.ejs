@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Table</title>
+    <title>TURNIEJ SZACHOWY</title>
     <link rel="stylesheet" href="/css/tournament.css">
 </head>
 <body>
-    <h2>User Table</h2>
+    <h2>TABELA WYNIKÓW</h2>
     <table>
         <tr>
-            <th>Username</th>
-            <th>Number of Matches</th>
-            <th>Points</th>
-            <th>Wins</th>
-            <th>Draws</th>
-            <th>Losses</th>
+            <th>Gracze</th>
+            <th>Mecze</th>
+            <th>Punkty</th>
+            <th>Wygrane</th>
+            <th>Remisy</th>
+            <th>Przegrane</th>
         </tr>
         <% table.forEach(function(user) { %>
             <tr>
@@ -29,7 +29,7 @@
         <% }); %>
     </table>
     <br>
-    <h2>Matches by Round</h2>
+    <h2>MECZE</h2>
     <% 
     const rounds = {}; 
     matches.forEach(match => {
