@@ -29,7 +29,6 @@
         <% }); %>
     </table>
     <br>
-    <h2>MECZE</h2>
     <% 
     const rounds = {}; 
     matches.forEach(match => {
@@ -46,7 +45,7 @@
             <li>
                 <%= match.whitePlayer %> (<%= match.whitePlayerScore || "0" %>) vs. <%= match.blackPlayer %> (<%= match.blackPlayerScore || "0" %>)
                 <% if (match.linkToMatch) { %>
-                    - <a href="<%= match.linkToMatch %>" target="_blank">Watch Match</a>
+                    >>>>>>> <a href="<%= match.linkToMatch %>" target="_blank">Watch Match</a>
                 <% } %>
             </li>
             <% }); %>
