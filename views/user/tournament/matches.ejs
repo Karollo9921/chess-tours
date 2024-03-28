@@ -95,14 +95,14 @@
             form.innerHTML = `
                 <label for="whitePlayerScore">Wynik białych (${whitePlayer}):</label>
                 <select id="whitePlayerScore" name="whitePlayerScore" required>
-                    <option value='val1' selected disabled hidden>${whitePlayerScore}</option>
+                    <option value='val1' selected disabled hidden>Wybierz nowy wynik</option>
                     <option value="1" ${whitePlayerScore === 1 ? "selected" : ""}>1</option>
                     <option value="0.5" ${whitePlayerScore === 0.5 ? "selected" : ""}>0.5</option>
                     <option value="0" ${whitePlayerScore === 0 ? "selected" : ""}>0</option>
                 </select>
                 <label for="blackPlayerScore">Wynik czarnych (${blackPlayer}):</label>
                 <select id="blackPlayerScore" name="blackPlayerScore" required>
-                    <option value='val1' selected disabled hidden>${blackPlayerScore}</option>
+                    <option value='val1' selected disabled hidden>Wybierz nowy wynik</option>
                     <option value="1" ${blackPlayerScore === 1 ? "selected" : ""}>1</option>
                     <option value="0.5" ${blackPlayerScore === 0.5 ? "selected" : ""}>0.5</option>
                     <option value="0" ${blackPlayerScore === 0 ? "selected" : ""}>0</option>
