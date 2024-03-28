@@ -45,51 +45,109 @@
 </head>
 <body>
     <button onclick="window.location='/tournament/<%= tournamentId %>';">Powrót do widoku tabeli</button>
-    <% 
-    const groupedMatches = {};
-    matches.forEach(match => {
-        if (!groupedMatches[match.round]) {
-            groupedMatches[match.round] = [];
-        }
-        groupedMatches[match.round].push(match);
-    });
-    Object.keys(groupedMatches).sort((a, b) => a - b).forEach(round => {
-    %>
+    <div id="editMatchPopup" class="popup" style="display:none;">
+        <!-- Popup formularza edycji wyników meczu -->
+        <form id="editMatchForm" action="" method="post" data-tournament-id="<%= tournamentId %>" onsubmit="event.preventDefault(); submitForm();">
+            <!-- Pola formularza wypełniane przez JavaScript poniżej -->
+        </form>
+        <button onclick="closePopup()">Zamknij</button> <!-- Przycisk Zamknij obok przycisku Aktualizuj -->
+    </div>
+    <% const groupedMatches = {}; matches.forEach(match => { if (!groupedMatches[match.round]) { groupedMatches[match.round] = []; } groupedMatches[match.round].push(match); }); Object.keys(groupedMatches).sort((a, b) => a - b).forEach(round => { %>
         <h2 style="font-weight: bold;">Runda <%= round %></h2>
         <% groupedMatches[round].forEach(match => { %>
             <div>
                 <% if (match.whitePlayerScore !== undefined && match.blackPlayerScore !== undefined) { %>
-                    <p><%= match.whitePlayer %> <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> <%= match.blackPlayer %><% if (match.linkToMatch) { %> *** (<a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a>) *** <% } %></p>
+                    <p><%= match.whitePlayer %> <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> <%= match.blackPlayer %>
+                        <% if (match.linkToMatch) { %> *** (<a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a>) *** <% } %>
+                        <button onclick="editMatch('<%= match._id %>', '<%= match.whitePlayer %>', '<%= match.whitePlayerScore %>', '<%= match.blackPlayer %>', '<%= match.blackPlayerScore %>', '<%= match.linkToMatch ? match.linkToMatch : ',' %>')">Edytuj</button>
+                    </p>
                 <% } else { %>
-                    <form id="form-<%= match._id %>" action="/matches/<%= match._id %>" method="post" data-tournament-id="<%= tournamentId %>">
+                    <!-- Oryginalny formularz do wprowadzania wyników -->
+                    <form action="/matches/<%= match._id %>" method="post" data-tournament-id="<%= tournamentId %>">
                         <input type="hidden" name="_method" value="put" />
-                        <label for="whitePlayerScore-<%= match._id %>"><%= match.whitePlayer %> (BIAŁE):</label>
-                        <select id="whitePlayerScore-<%= match._id %>" name="whitePlayerScore" required>
-                            <option value="" selected disabled>Select score</option>
+                        <label for="whitePlayerScore"><%= match.whitePlayer %> (BIAŁE):</label>
+                        <select name="whitePlayerScore" required>
+                            <option value="" selected disabled>Wybierz wynik</option>
                             <option value="1">1</option>
                             <option value="0.5">0.5</option>
                             <option value="0">0</option>
                         </select>
-                        
-                        <label for="blackPlayerScore-<%= match._id %>"><%= match.blackPlayer %> (CZARNE):</label>
-                        <select id="blackPlayerScore-<%= match._id %>" name="blackPlayerScore" required>
-                            <option value="" selected disabled>Select score</option>
+                        <label for="blackPlayerScore"><%= match.blackPlayer %> (CZARNE):</label>
+                        <select name="blackPlayerScore" required>
+                            <option value="" selected disabled>Wybierz wynik</option>
                             <option value="1">1</option>
                             <option value="0.5">0.5</option>
                             <option value="0">0</option>
                         </select>
-    
-                        <% if (!match.linkToMatch) { %>
-                            <label for="linkToMatch-<%= match._id %>">Link to Match (optional):</label>
-                            <input type="text" id="linkToMatch-<%= match._id %>" name="linkToMatch">
-                        <% } %>
-                        
-                        <button type="submit">Update Match</button>
+                        <label for="linkToMatch">Link do meczu (opcjonalnie):</label>
+                        <input type="text" name="linkToMatch">
+                        <button type="submit">Aktualizuj mecz</button>
                     </form>
                 <% } %>
             </div>
         <% }); %>
     <% }); %>
+    <script>
+        function editMatch(matchId, whitePlayer, whitePlayerScore, blackPlayer, blackPlayerScore, linkToMatch) {
+            const form = document.getElementById('editMatchForm');
+            form.action = '/matches/' + matchId + '?_method=put';
+            form.innerHTML = `
+                <label for="whitePlayerScore">Wynik białych (${whitePlayer}):</label>
+                <select id="whitePlayerScore" name="whitePlayerScore" required>
+                    <option value='val1' selected disabled hidden>${whitePlayerScore}</option>
+                    <option value="1" ${whitePlayerScore === 1 ? "selected" : ""}>1</option>
+                    <option value="0.5" ${whitePlayerScore === 0.5 ? "selected" : ""}>0.5</option>
+                    <option value="0" ${whitePlayerScore === 0 ? "selected" : ""}>0</option>
+                </select>
+                <label for="blackPlayerScore">Wynik czarnych (${blackPlayer}):</label>
+                <select id="blackPlayerScore" name="blackPlayerScore" required>
+                    <option value='val1' selected disabled hidden>${blackPlayerScore}</option>
+                    <option value="1" ${blackPlayerScore === 1 ? "selected" : ""}>1</option>
+                    <option value="0.5" ${blackPlayerScore === 0.5 ? "selected" : ""}>0.5</option>
+                    <option value="0" ${blackPlayerScore === 0 ? "selected" : ""}>0</option>
+                </select>
+                <label for="linkToMatch">Link do meczu:</label>
+                <input type="text" id="linkToMatch" name="linkToMatch" value="${linkToMatch}">
+                <button type="submit">Aktualizuj</button>
+            `;
+            document.getElementById('editMatchPopup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('editMatchPopup').style.display = 'none';
+        }
+
+        function submitForm() {
+            const form = document.getElementById('editMatchForm');
+            console.log(tournamentId)
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = `/tournament/${tournamentId}`;
+                }
+            });
+        }
+    </script>
+    <style>
+        .popup {
+            position: fixed;
+            width: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            z-index: 1000;
+            display: none; /* Dla pewności, że początkowo popup jest ukryty */
+        }
+        .popup button {
+            margin-top: 10px; /* Odstęp między przyciskami */
+            margin-right: 5px; /* Odstęp między przyciskiem a formularzem */
+        }
+    </style>
 </body>
 </html>
 
