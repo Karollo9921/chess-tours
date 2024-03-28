@@ -48,10 +48,7 @@ export class TournamentService {
             username: cv.whitePlayer,
             numOfMatches:
               cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
-            points:
-              cv.whitePlayer === 'Maciej'
-                ? (cv.whitePlayerScore || 0) - 1
-                : cv.whitePlayerScore || 0,
+            points: cv.whitePlayerScore || 0,
             wins: cv.whitePlayerScore === 1 ? 1 : 0,
             draws: cv.whitePlayerScore === 0.5 ? 1 : 0,
             losses: cv.whitePlayerScore === 0 ? 1 : 0,
@@ -77,10 +74,7 @@ export class TournamentService {
             username: cv.blackPlayer,
             numOfMatches:
               cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
-            points:
-              cv.blackPlayer === 'Maciej'
-                ? (cv.blackPlayerScore || 0) - 1
-                : cv.blackPlayerScore || 0,
+            points: cv.blackPlayerScore || 0,
             wins: cv.blackPlayerScore === 1 ? 1 : 0,
             draws: cv.blackPlayerScore === 0.5 ? 1 : 0,
             losses: cv.blackPlayerScore === 0 ? 1 : 0,
