@@ -45,12 +45,13 @@
 </head>
 <body>
     <button onclick="window.location='/tournament/<%= tournamentId %>';">Powrót do widoku tabeli</button>
+    <div id="overlay" class="overlay"></div>
     <div id="editMatchPopup" class="popup" style="display:none;">
         <!-- Popup formularza edycji wyników meczu -->
         <form id="editMatchForm" action="" method="post" data-tournament-id="<%= tournamentId %>" onsubmit="event.preventDefault(); submitForm();">
             <!-- Pola formularza wypełniane przez JavaScript poniżej -->
         </form>
-        <button onclick="closePopup()">Zamknij</button> <!-- Przycisk Zamknij obok przycisku Aktualizuj -->
+         <!-- Przycisk Zamknij obok przycisku Aktualizuj -->
     </div>
     <% const groupedMatches = {}; matches.forEach(match => { if (!groupedMatches[match.round]) { groupedMatches[match.round] = []; } groupedMatches[match.round].push(match); }); Object.keys(groupedMatches).sort((a, b) => a - b).forEach(round => { %>
         <h2 style="font-weight: bold;">Runda <%= round %></h2>
@@ -109,11 +110,15 @@
                 <label for="linkToMatch">Link do meczu:</label>
                 <input type="text" id="linkToMatch" name="linkToMatch" value="${linkToMatch}">
                 <button type="submit">Aktualizuj</button>
+                <button onclick="closePopup()">Zamknij</button>
             `;
+            document.getElementById('editMatchPopup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block'; // Pokaż overlay
             document.getElementById('editMatchPopup').style.display = 'block';
         }
 
         function closePopup() {
+            document.getElementById('overlay').style.display = 'none'; // Ukryj overlay
             document.getElementById('editMatchPopup').style.display = 'none';
         }
 
@@ -131,21 +136,53 @@
         }
     </script>
     <style>
+        /* Styl dla tła popupa */
         .popup {
-            position: fixed;
-            width: 300px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ddd;
-            z-index: 1000;
-            display: none; /* Dla pewności, że początkowo popup jest ukryty */
+            position: fixed; /* Stała pozycja */
+            top: 50%; /* Centrowanie w pionie */
+            left: 50%; /* Centrowanie w poziomie */
+            transform: translate(-50%, -50%); /* Precyzyjne centrowanie */
+            width: auto; /* Szerokość na podstawie zawartości */
+            min-width: 300px; /* Minimalna szerokość */
+            padding: 20px; /* Odstępy wewnątrz */
+            background-color: white; /* Białe tło */
+            border: 1px solid #ccc; /* Subtelna obramówka */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lekkie cieniowanie */
+            z-index: 1050; /* Upewnij się, że jest nad innymi elementami */
         }
-        .popup button {
-            margin-top: 10px; /* Odstęp między przyciskami */
-            margin-right: 5px; /* Odstęp między przyciskiem a formularzem */
+
+        /* Styl dla formularza i jego elementów */
+        #editMatchForm {
+            display: flex; /* Użycie flexboxa dla układu */
+            flex-direction: column; /* Elementy ułożone pionowo */
+            gap: 10px; /* Odstępy między elementami */
+        }
+
+        #editMatchForm button {
+            align-self: center; /* Centrowanie przycisków */
+            margin-top: 20px; /* Odstęp od pozostałej części formularza */
+        }
+
+        #editMatchForm > button:last-child {
+            margin-left: 10px; /* Odstęp między przyciskami */
+        }
+
+        /* Dodatkowy styl, aby umieścić przyciski obok siebie */
+        .form-buttons {
+            display: flex;
+            justify-content: center; /* Centrowanie przycisków */
+        }
+
+        /* Styl dla przyciemnienia tła */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040; /* Poniżej popupa, ale nad resztą treści */
+            display: none; /* Domyślnie ukryty */
         }
     </style>
 </body>
