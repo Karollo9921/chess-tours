@@ -43,9 +43,13 @@
         <ul>
             <% matches.forEach(match => { %>
             <li>
-                <%= match.whitePlayer %> (<%= match.whitePlayerScore || "0" %>) vs. <%= match.blackPlayer %> (<%= match.blackPlayerScore || "0" %>)
-                <% if (match.linkToMatch) { %>
-                    >>> <a href="<%= match.linkToMatch %>" target="_blank">Zobacz</a>
+                <% if (match.status === "finished") { %>
+                    <strong><%= match.whitePlayer %> (<%= match.whitePlayerScore || "0" %>) vs. <%= match.blackPlayer %> (<%= match.blackPlayerScore || "0" %>)</strong>
+                    <% if (match.linkToMatch) { %>
+                        >>> <a href="<%= match.linkToMatch %>" target="_blank">Zobacz</a>
+                    <% } %>
+                <% } else { %>
+                    <%= match.whitePlayer %> (<%= match.whitePlayerScore || "0" %>) vs. <%= match.blackPlayer %> (<%= match.blackPlayerScore || "0" %>)
                 <% } %>
             </li>
             <% }); %>
