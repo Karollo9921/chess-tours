@@ -61,9 +61,14 @@ export class MatchService {
     ]);
   }
 
-  async getMatchesByTournamentId(
-    tournamentId: string,
-  ): Promise<(Match & { whitePlayer: string; blackPlayer: string })[]> {
+  async getMatchesByTournamentId(tournamentId: string): Promise<
+    (Match & {
+      whitePlayer: string;
+      blackPlayer: string;
+      whitePlayerNick: string;
+      blackPlayerNick: string;
+    })[]
+  > {
     return this.matchModel.aggregate([
       {
         $match: {
@@ -96,6 +101,8 @@ export class MatchService {
         $addFields: {
           whitePlayer: '$whitePlayerObj.login',
           blackPlayer: '$blackPlayerObj.login',
+          whitePlayerNick: '$whitePlayerObj.nick',
+          blackPlayerNick: '$blackPlayerObj.nick',
         },
       },
       {

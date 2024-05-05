@@ -12,6 +12,7 @@ import { MatchService } from 'src/match/match.service';
 export interface IUserTable {
   userId: string;
   username: string;
+  nick: string;
   numOfMatches: number;
   points: number;
   wins: number;
@@ -53,6 +54,7 @@ export class TournamentService {
         acc.push({
           userId: `${cv.whitePlayerId}`,
           username: cv.whitePlayer,
+          nick: cv.whitePlayerNick,
           numOfMatches: cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
           points: cv.whitePlayerScore || 0,
           wins: cv.whitePlayerScore === 1 ? 1 : 0,
@@ -78,6 +80,7 @@ export class TournamentService {
         acc.push({
           userId: `${cv.blackPlayerId}`,
           username: cv.blackPlayer,
+          nick: cv.blackPlayerNick,
           numOfMatches: cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
           points: cv.blackPlayerScore || 0,
           wins: cv.blackPlayerScore === 1 ? 1 : 0,
