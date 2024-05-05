@@ -37,11 +37,13 @@ form {
   border-radius: 8px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  text-align: center;
 }
 
 label {
   display: block;
   margin: 10px 0 5px;
+  text-align: center;
 }
 
 select, input[type="text"] {
@@ -52,6 +54,7 @@ select, input[type="text"] {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  text-align: center;
 }
 
 input[type="submit"] {
@@ -63,6 +66,7 @@ input[type="submit"] {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  text-align: center;
 }
 
 input[type="submit"]:hover {
@@ -71,6 +75,7 @@ input[type="submit"]:hover {
 
 div {
   margin-bottom: 20px;
+  text-align: center;
 }
 
 /* Dodatkowe style dla linków, jeśli będą potrzebne */
