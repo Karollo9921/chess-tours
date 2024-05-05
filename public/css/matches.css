@@ -3,22 +3,12 @@ body {
   background-color: #f7f7f7;
   color: #333;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  margin: 0; /* Usuwa domyślny margines */
 }
 
 h1, h2 {
   color: #444;
-  text-align: center; /* Wyśrodkowanie tekstu nagłówków */
-}
-
-button, form, input[type="submit"] {
-  width: 100%; /* Ustawia szerokość przycisków i formularza */
-  max-width: 500px; /* Maksymalna szerokość, aby nie były za szerokie */
 }
 
 button {
@@ -28,12 +18,11 @@ button {
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  display: block; /* Ustawienie na blokowe dla lepszego wyśrodkowania */
+  display: inline-block;
   font-size: 16px;
-  margin: 4px auto; /* Automatyczne marginesy dla wyśrodkowania */
+  margin: 4px 2px;
   cursor: pointer;
   border-radius: 5px;
-  transition: background-color 0.3s; /* Animacja zmiany koloru */
 }
 
 button:hover {
@@ -46,29 +35,29 @@ form {
   border-radius: 8px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  display: block; /* Wyśrodkowanie formularza */
 }
 
 label {
   display: block;
-  margin: 10px auto 5px; /* Automatyczne marginesy dla wyśrodkowania */
+  margin: 10px 0 5px;
 }
 
 select, input[type="text"] {
   width: 100%;
   padding: 8px;
-  margin: 5px auto 20px; /* Automatyczne marginesy dla wyśrodkowania */
-  display: block; /* Wyśrodkowanie pól */
+  margin: 5px 0 20px;
+  display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
 }
 
 input[type="submit"] {
+  width: 100%;
   background-color: #4CAF50;
   color: white;
   padding: 14px 20px;
-  margin: 8px auto; /* Automatyczne marginesy dla wyśrodkowania */
+  margin: 8px 0;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -80,19 +69,14 @@ input[type="submit"]:hover {
 
 div {
   margin-bottom: 20px;
-  width: 100%;
-  max-width: 500px; /* Ogranicza szerokość divów */
 }
 
 /* Dodatkowe style dla linków, jeśli będą potrzebne */
 a {
   color: #008cba;
   text-decoration: none;
-  display: block; /* Umożliwia lepsze wyśrodkowanie */
-  margin: 0 auto; /* Automatyczne marginesy dla wyśrodkowania */
 }
 
 a:hover {
   text-decoration: underline;
 }
-
