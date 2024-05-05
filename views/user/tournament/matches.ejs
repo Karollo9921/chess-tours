@@ -59,7 +59,7 @@
             <div>
                 <% if (match.whitePlayerScore !== undefined && match.blackPlayerScore !== undefined) { %>
                     <p><%= match.whitePlayer %> <%= match.whitePlayerScore %> - <%= match.blackPlayerScore %> <%= match.blackPlayer %>
-                        <% if (match.linkToMatch) { %> *** (<a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a>) *** <% } %>
+                        <% if (match.linkToMatch) { %> *** (<a href="<%= match.linkToMatch %>" target="_blank">Link do meczu</a>) *** <% } %><br>
                         <button onclick="editMatch('<%= match._id %>', '<%= match.whitePlayer %>', '<%= match.whitePlayerScore %>', '<%= match.blackPlayer %>', '<%= match.blackPlayerScore %>', '<%= match.linkToMatch ? match.linkToMatch : ',' %>')">Edytuj</button>
                     </p>
                 <% } else { %>
