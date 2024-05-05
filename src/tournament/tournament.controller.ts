@@ -27,14 +27,14 @@ export class TournamentController {
   @Render('./tournament/tournament')
   @Get(':tournamentId')
   async getTable(@Param() { tournamentId }) {
-    const { table, matches } = await this.tournamentService.getTable(
-      tournamentId,
-    );
+    const { table, matches, countSonnebornBergerSystem } =
+      await this.tournamentService.getTable(tournamentId);
 
     return {
       table,
       matches,
       tournamentId,
+      countSonnebornBergerSystem,
     };
   }
 

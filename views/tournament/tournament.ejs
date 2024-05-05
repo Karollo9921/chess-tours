@@ -16,7 +16,7 @@
             <th>W</th>
             <th>R</th>
             <th>P</th>
-            <% if (`${table[0]?.sb}`) { %>
+            <% if (countSonnebornBergerSystem) { %>
                 <th>SB</th>
             <% } %>
         </tr>
@@ -28,7 +28,7 @@
                 <td><%= user.wins %></td>
                 <td><%= user.draws %></td>
                 <td><%= user.losses %></td>
-                <% if (`${table[0]?.sb}`) { %>
+                <% if (countSonnebornBergerSystem) { %>
                     <td><%= user.sb %></td>
                 <% } %>
             </tr>

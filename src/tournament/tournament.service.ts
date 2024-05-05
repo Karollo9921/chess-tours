@@ -116,6 +116,7 @@ export class TournamentService {
         }
         return a.round - b.round;
       }),
+      countSonnebornBergerSystem,
     };
   }
 
