@@ -154,7 +154,11 @@ export class TournamentService {
             matches.push({
               tournamentId,
               round,
-              whitePlayerId: new Types.ObjectId(helpListOfPlayers[i - j]),
+              whitePlayerId: new Types.ObjectId(
+                helpListOfPlayers[
+                  j > i ? helpListOfPlayers.length - i - j : i - j
+                ],
+              ),
               blackPlayerId: new Types.ObjectId(
                 helpListOfPlayers[this.mod(i + j + 1, numOfPlayers - 1)],
               ),
@@ -165,7 +169,11 @@ export class TournamentService {
             matches.push({
               tournamentId,
               round,
-              whitePlayerId: new Types.ObjectId(helpListOfPlayers[i - j]),
+              whitePlayerId: new Types.ObjectId(
+                helpListOfPlayers[
+                  j > i ? helpListOfPlayers.length - i - j : i - j
+                ],
+              ),
               blackPlayerId: new Types.ObjectId(playerIds[numOfPlayers - 1]),
               status: MatchStatusEnum.waiting,
               match: 1,
