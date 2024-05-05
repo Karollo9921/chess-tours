@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTournamentDto {
   @IsNotEmpty()
@@ -8,4 +8,8 @@ export class CreateTournamentDto {
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  countSonnebornBergerSystem: boolean;
 }

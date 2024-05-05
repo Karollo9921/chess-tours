@@ -10,12 +10,15 @@
     <h2>TABELA WYNIKÓW</h2>
     <table>
         <tr>
-            <th>Gracze</th>
-            <th>Mecze</th>
-            <th>Punkty</th>
-            <th>Wygrane</th>
-            <th>Remisy</th>
-            <th>Przegrane</th>
+            <th>Gracz</th>
+            <th>M</th>
+            <th>Pkt</th>
+            <th>W</th>
+            <th>R</th>
+            <th>P</th>
+            <% if (`${table[0]?.sb}`) { %>
+                <th>SB</th>
+            <% } %>
         </tr>
         <% table.forEach(function(user) { %>
             <tr>
@@ -25,6 +28,9 @@
                 <td><%= user.wins %></td>
                 <td><%= user.draws %></td>
                 <td><%= user.losses %></td>
+                <% if (`${table[0]?.sb}`) { %>
+                    <td><%= user.sb %></td>
+                <% } %>
             </tr>
         <% }); %>
     </table>

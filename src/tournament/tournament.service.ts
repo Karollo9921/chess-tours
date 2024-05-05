@@ -9,7 +9,7 @@ import { MatchStatusEnum } from 'src/match/entity/match-status.enum';
 import { set, clone } from 'lodash';
 import { MatchService } from 'src/match/match.service';
 
-interface IUserTable {
+export interface IUserTable {
   userId: string;
   username: string;
   numOfMatches: number;
@@ -17,6 +17,7 @@ interface IUserTable {
   wins: number;
   draws: number;
   losses: number;
+  sb?: number;
 }
 
 @Injectable()
@@ -37,69 +38,78 @@ export class TournamentService {
       tournamentId,
     );
 
-    const table = matches
-      .reduce((acc: IUserTable[], cv) => {
-        const user1 = acc.find((item) => item.username === cv.whitePlayer);
-        const user2 = acc.find((item) => item.username === cv.blackPlayer);
+    const { countSonnebornBergerSystem } = await this.tournamentModel.findOne(
+      {
+        _id: new Types.ObjectId(tournamentId),
+      },
+      ['countSonnebornBergerSystem'],
+    );
 
-        if (!user1) {
-          acc.push({
-            userId: `${cv.whitePlayerId}`,
-            username: cv.whitePlayer,
-            numOfMatches:
-              cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
-            points: cv.whitePlayerScore || 0,
-            wins: cv.whitePlayerScore === 1 ? 1 : 0,
-            draws: cv.whitePlayerScore === 0.5 ? 1 : 0,
-            losses: cv.whitePlayerScore === 0 ? 1 : 0,
-          });
-        } else {
-          acc.forEach((ut) => {
-            if (ut.username === user1.username) {
-              ut.numOfMatches =
-                cv.whitePlayerScore + cv.blackPlayerScore === 1
-                  ? ut.numOfMatches + 1
-                  : ut.numOfMatches;
-              ut.points = ut.points + (cv.whitePlayerScore || 0);
-              ut.wins = cv.whitePlayerScore === 1 ? ut.wins + 1 : ut.wins;
-              ut.draws = cv.whitePlayerScore === 0.5 ? ut.draws + 1 : ut.draws;
-              ut.losses = cv.whitePlayerScore === 0 ? ut.losses + 1 : ut.losses;
-            }
-          });
-        }
+    const table = matches.reduce((acc: IUserTable[], cv) => {
+      const user1 = acc.find((item) => item.username === cv.whitePlayer);
+      const user2 = acc.find((item) => item.username === cv.blackPlayer);
 
-        if (!user2) {
-          acc.push({
-            userId: `${cv.blackPlayerId}`,
-            username: cv.blackPlayer,
-            numOfMatches:
-              cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
-            points: cv.blackPlayerScore || 0,
-            wins: cv.blackPlayerScore === 1 ? 1 : 0,
-            draws: cv.blackPlayerScore === 0.5 ? 1 : 0,
-            losses: cv.blackPlayerScore === 0 ? 1 : 0,
-          });
-        } else {
-          acc.forEach((ut) => {
-            if (ut.username === user2.username) {
-              ut.numOfMatches =
-                cv.whitePlayerScore + cv.blackPlayerScore === 1
-                  ? ut.numOfMatches + 1
-                  : ut.numOfMatches;
-              ut.points = ut.points + (cv.blackPlayerScore || 0);
-              ut.wins = cv.blackPlayerScore === 1 ? ut.wins + 1 : ut.wins;
-              ut.draws = cv.blackPlayerScore === 0.5 ? ut.draws + 1 : ut.draws;
-              ut.losses = cv.blackPlayerScore === 0 ? ut.losses + 1 : ut.losses;
-            }
-          });
-        }
+      if (!user1) {
+        acc.push({
+          userId: `${cv.whitePlayerId}`,
+          username: cv.whitePlayer,
+          numOfMatches: cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
+          points: cv.whitePlayerScore || 0,
+          wins: cv.whitePlayerScore === 1 ? 1 : 0,
+          draws: cv.whitePlayerScore === 0.5 ? 1 : 0,
+          losses: cv.whitePlayerScore === 0 ? 1 : 0,
+        });
+      } else {
+        acc.forEach((ut) => {
+          if (ut.username === user1.username) {
+            ut.numOfMatches =
+              cv.whitePlayerScore + cv.blackPlayerScore === 1
+                ? ut.numOfMatches + 1
+                : ut.numOfMatches;
+            ut.points = ut.points + (cv.whitePlayerScore || 0);
+            ut.wins = cv.whitePlayerScore === 1 ? ut.wins + 1 : ut.wins;
+            ut.draws = cv.whitePlayerScore === 0.5 ? ut.draws + 1 : ut.draws;
+            ut.losses = cv.whitePlayerScore === 0 ? ut.losses + 1 : ut.losses;
+          }
+        });
+      }
 
-        return acc;
-      }, [])
-      .sort((a: IUserTable, b: IUserTable) => this.sortMethod(a, b));
+      if (!user2) {
+        acc.push({
+          userId: `${cv.blackPlayerId}`,
+          username: cv.blackPlayer,
+          numOfMatches: cv.whitePlayerScore + cv.blackPlayerScore === 1 ? 1 : 0,
+          points: cv.blackPlayerScore || 0,
+          wins: cv.blackPlayerScore === 1 ? 1 : 0,
+          draws: cv.blackPlayerScore === 0.5 ? 1 : 0,
+          losses: cv.blackPlayerScore === 0 ? 1 : 0,
+        });
+      } else {
+        acc.forEach((ut) => {
+          if (ut.username === user2.username) {
+            ut.numOfMatches =
+              cv.whitePlayerScore + cv.blackPlayerScore === 1
+                ? ut.numOfMatches + 1
+                : ut.numOfMatches;
+            ut.points = ut.points + (cv.blackPlayerScore || 0);
+            ut.wins = cv.blackPlayerScore === 1 ? ut.wins + 1 : ut.wins;
+            ut.draws = cv.blackPlayerScore === 0.5 ? ut.draws + 1 : ut.draws;
+            ut.losses = cv.blackPlayerScore === 0 ? ut.losses + 1 : ut.losses;
+          }
+        });
+      }
+
+      return acc;
+    }, []);
+
+    if (countSonnebornBergerSystem) {
+      table.forEach((t) => this.addSBPoints(t, matches, table));
+    }
 
     return {
-      table,
+      table: table.sort((a: IUserTable, b: IUserTable) =>
+        this.sortMethod(a, b, countSonnebornBergerSystem),
+      ),
       matches: matches.sort((a, b) => {
         if (a.round === b.round) {
           return a.match - b.match;
@@ -116,6 +126,7 @@ export class TournamentService {
       participantsIds: body.playerIds.map((id) => new Types.ObjectId(id)),
       name: body.name,
       creatorId: new Types.ObjectId(id),
+      countSonnebornBergerSystem: body.countSonnebornBergerSystem,
     });
 
     await this.matchService.insertMatches(
@@ -196,14 +207,18 @@ export class TournamentService {
     return [...matches, ...revanges];
   }
 
-  private sortMethod(a: IUserTable, b: IUserTable) {
+  private sortMethod(
+    a: IUserTable,
+    b: IUserTable,
+    countSonnebornBergerSystem: boolean,
+  ) {
     if (a.points !== b.points) {
       return b.points - a.points;
     }
 
-    if (a.numOfMatches !== b.numOfMatches) {
-      return a.numOfMatches - b.numOfMatches;
-    }
+    // if (a.numOfMatches !== b.numOfMatches) {
+    //   return a.numOfMatches - b.numOfMatches;
+    // }
 
     if (a.wins !== b.wins) {
       return b.wins - a.wins;
@@ -212,7 +227,46 @@ export class TournamentService {
     if (a.draws !== b.draws) {
       return b.draws - a.draws;
     }
+
+    if (countSonnebornBergerSystem && a.sb !== b.sb) {
+      return b.sb - a.sb;
+    }
+
     return b.username.localeCompare(a.username);
+  }
+
+  private addSBPoints(
+    t: IUserTable,
+    matches: (Match & { whitePlayer: string; blackPlayer: string })[],
+    table: IUserTable[],
+  ) {
+    let sb = 0;
+
+    for (const match of matches) {
+      if (
+        `${match.whitePlayerId}` === `${t.userId}` &&
+        match.whitePlayerScore
+      ) {
+        sb =
+          sb +
+          match.whitePlayerScore *
+            table.find((tbl) => `${tbl.userId}` === `${match.blackPlayerId}`)
+              .points;
+      }
+
+      if (
+        `${match.blackPlayerId}` === `${t.userId}` &&
+        match.blackPlayerScore
+      ) {
+        sb =
+          sb +
+          match.blackPlayerScore *
+            table.find((tbl) => `${tbl.userId}` === `${match.whitePlayerId}`)
+              .points;
+      }
+    }
+
+    set(t, 'sb', sb);
   }
 
   private mod(n: number, m: number): number {

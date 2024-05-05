@@ -26,6 +26,9 @@ export class Tournament {
   })
   @IsEnum(Object.values(TournamentStatusEnum))
   status: TournamentStatusEnum;
+
+  @Prop({ type: Boolean, required: true })
+  countSonnebornBergerSystem: boolean;
 }
 
 export const TournamentSchema = SchemaFactory.createForClass(Tournament);

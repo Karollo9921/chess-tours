@@ -30,6 +30,7 @@ export class TournamentController {
     const { table, matches } = await this.tournamentService.getTable(
       tournamentId,
     );
+
     return {
       table,
       matches,
