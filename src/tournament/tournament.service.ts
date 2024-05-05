@@ -63,7 +63,7 @@ export class TournamentService {
         });
       } else {
         acc.forEach((ut) => {
-          if (ut.username === user1.username) {
+          if (ut.nick === user1.nick) {
             ut.numOfMatches =
               cv.whitePlayerScore + cv.blackPlayerScore === 1
                 ? ut.numOfMatches + 1
@@ -89,7 +89,7 @@ export class TournamentService {
         });
       } else {
         acc.forEach((ut) => {
-          if (ut.username === user2.username) {
+          if (ut.nick === user2.nick) {
             ut.numOfMatches =
               cv.whitePlayerScore + cv.blackPlayerScore === 1
                 ? ut.numOfMatches + 1
