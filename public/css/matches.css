@@ -78,6 +78,10 @@ div {
   text-align: center;
 }
 
+p {
+  text-align: center;
+}
+
 /* Dodatkowe style dla linków, jeśli będą potrzebne */
 a {
   color: #008cba;
