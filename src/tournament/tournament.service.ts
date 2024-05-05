@@ -156,7 +156,7 @@ export class TournamentService {
               round,
               whitePlayerId: new Types.ObjectId(
                 helpListOfPlayers[
-                  j > i ? helpListOfPlayers.length - i - j : i - j
+                  j > i ? helpListOfPlayers.length + i - j : i - j
                 ],
               ),
               blackPlayerId: new Types.ObjectId(
@@ -171,7 +171,7 @@ export class TournamentService {
               round,
               whitePlayerId: new Types.ObjectId(
                 helpListOfPlayers[
-                  j > i ? helpListOfPlayers.length - i - j : i - j
+                  j > i ? helpListOfPlayers.length + i - j : i - j
                 ],
               ),
               blackPlayerId: new Types.ObjectId(playerIds[numOfPlayers - 1]),
