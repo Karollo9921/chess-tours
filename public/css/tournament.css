@@ -15,10 +15,11 @@ h2 {
   text-align: center;
 }
 
-h3 {
-  color: #444;
+p {
+  color: red;
   margin-bottom: 20px;
   text-align: center;
+  font-size: 1.17em;
 }
 
 table {
