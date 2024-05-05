@@ -10,8 +10,8 @@
     <h2>TABELA WYNIKÓW</h2>
     <table>
         <tr>
-            <th>Imię</th>
             <th>Nick</th>
+            <th>Imię</th>
             <th>M</th>
             <th>Pkt</th>
             <th>W</th>
@@ -24,7 +24,7 @@
         <% table.forEach(function(user) { %>
             <tr>
                 <td><a href="https://www.chess.com/member/<%= user.nick %>" target="_blank"><%= user.nick %></a></td>
-                <td><a href="/matches/<%= user.userId %>/<%= tournamentId %>"></a><%= user.username %></a></td>
+                <td><a href="/matches/<%= user.userId %>/<%= tournamentId %>"><%= user.username %></a></td>
                 <td><%= user.numOfMatches %></td>
                 <td><%= user.points %></td>
                 <td><%= user.wins %></td>
