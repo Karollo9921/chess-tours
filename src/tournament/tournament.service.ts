@@ -47,8 +47,8 @@ export class TournamentService {
     );
 
     const table = matches.reduce((acc: IUserTable[], cv) => {
-      const user1 = acc.find((item) => item.username === cv.whitePlayer);
-      const user2 = acc.find((item) => item.username === cv.blackPlayer);
+      const user1 = acc.find((item) => item.nick === cv.whitePlayerNick);
+      const user2 = acc.find((item) => item.nick === cv.blackPlayerNick);
 
       if (!user1) {
         acc.push({
