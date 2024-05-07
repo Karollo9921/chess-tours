@@ -228,10 +228,6 @@ export class TournamentService {
       return b.points - a.points;
     }
 
-    // if (a.numOfMatches !== b.numOfMatches) {
-    //   return a.numOfMatches - b.numOfMatches;
-    // }
-
     if (a.wins !== b.wins) {
       return b.wins - a.wins;
     }
@@ -242,6 +238,10 @@ export class TournamentService {
 
     if (countSonnebornBergerSystem && a.sb !== b.sb) {
       return b.sb - a.sb;
+    }
+
+    if (a.numOfMatches !== b.numOfMatches) {
+      return a.numOfMatches - b.numOfMatches;
     }
 
     return b.username.localeCompare(a.username);
