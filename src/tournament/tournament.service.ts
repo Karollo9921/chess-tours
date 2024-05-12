@@ -6,7 +6,7 @@ import { Tournament } from './entity/tournament.entity';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { Match } from 'src/match/entity/match.entity';
 import { MatchStatusEnum } from 'src/match/entity/match-status.enum';
-import { set, clone } from 'lodash';
+import { set, clone, shuffle } from 'lodash';
 import { MatchService } from 'src/match/match.service';
 
 export interface IUserTable {
@@ -143,8 +143,11 @@ export class TournamentService {
     playerIds: string[],
   ): Match[] {
     const matches: Match[] = [];
-    const numOfPlayers = playerIds.length;
-    const helpListOfPlayers = playerIds.slice(0, numOfPlayers - 1);
+
+    const shuffledPlayers = shuffle(playerIds);
+
+    const numOfPlayers = shuffledPlayers.length;
+    const helpListOfPlayers = shuffledPlayers.slice(0, numOfPlayers - 1);
 
     if (this.mod(numOfPlayers, 2) === 0) {
       for (let i = 0; i < numOfPlayers - 1; i++) {
@@ -174,7 +177,9 @@ export class TournamentService {
                   j > i ? helpListOfPlayers.length + i - j : i - j
                 ],
               ),
-              blackPlayerId: new Types.ObjectId(playerIds[numOfPlayers - 1]),
+              blackPlayerId: new Types.ObjectId(
+                shuffledPlayers[numOfPlayers - 1],
+              ),
               status: MatchStatusEnum.waiting,
               match: 1,
             });
@@ -189,10 +194,10 @@ export class TournamentService {
             tournamentId,
             round,
             whitePlayerId: new Types.ObjectId(
-              playerIds[this.mod(i - j - 1, numOfPlayers)],
+              shuffledPlayers[this.mod(i - j - 1, numOfPlayers)],
             ),
             blackPlayerId: new Types.ObjectId(
-              playerIds[this.mod(i + j + 1, numOfPlayers)],
+              shuffledPlayers[this.mod(i + j + 1, numOfPlayers)],
             ),
             status: MatchStatusEnum.waiting,
             match: 1,
